@@ -15,11 +15,17 @@ export class RegisterController {
 
     @Post('/')
     async registerCustomer(@Req() request, @Body() body: IRegisterUser){
-
-        const data = await registerSchema.validate(body, YupOptions);
-        const user = await this.registerService.registerUser(request, data);
+        let data:any;
+        try{
+        const validate = await registerSchema.validate(body, YupOptions);
+        const user = await this.registerService.registerUser(request, validate);
 
         await this.rolesService.attachRoles(user, [RolesList.CUSTOMER]);
-        return { user }
+        return { data:{user} }
+
+    }catch(e){
+        data = e
+    }          
+        return{data}
     }
 }
