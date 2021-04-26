@@ -299,8 +299,7 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
-# Hide seeds
-seeds/
+
 
 # Typescript v1 declaration files
 typings/
