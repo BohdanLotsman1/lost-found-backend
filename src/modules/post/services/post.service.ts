@@ -1,14 +1,23 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { IPost } from "../types";
 import { PostModel } from "../models/post.model";
-import { UserModel } from 'src/modules/user/models/user.model';
 
 @Injectable()
 export class PostService {
 
-    async findAll(): Promise<PostModel[]> {
+    async findAll(page:any): Promise<any> {
         
-        return PostModel.query().select();
+        const postsCount:any =  await PostModel.query().select().count().as('count').first()
+
+        let pages = Math.floor(postsCount['count(*)']/10);
+
+        const list = await PostModel.query().select().limit(10).offset(page*10-10);
+
+        if(pages == 0){
+            pages = 1
+        }
+        
+        return{list,pages}
     }
 
     async findById(id: string): Promise<PostModel> {
@@ -21,10 +30,14 @@ export class PostService {
         return PostModel.query().select();
     }
 
-    async insert(data: IPost): Promise<PostModel|any> {
+    async insert(image:Express.Multer.File ,data: any): Promise<PostModel|any> {
               
+        if(image !== undefined){
+            data.image = image.filename;
+        }
+
         const product = await PostModel.query().insert(data);
-       
+        
         return PostModel.query().select().where('id', product.id).first();    
     }
 

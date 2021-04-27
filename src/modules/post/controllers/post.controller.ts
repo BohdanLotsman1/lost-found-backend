@@ -1,18 +1,19 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { IPost } from "../types";
 import { PostService } from "../services/post.service";
 import { AccessLevel } from 'src/lib/decorator/app-access.decorator';
 import { AccessLevelList } from 'src/lib/enums/accessLevel.list';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('post')
 export class PostController {
     constructor(protected productService: PostService) {}
 
-    @Get('/all')
+    @Get('/')
     @AccessLevel(AccessLevelList.LEVEL_CUSTOMER)
-    async all(@Req() request){ 
-        const list = await this.productService.findAll();
-        return { list };
+    async all(@Query('page') page:any){ 
+        const postData = await this.productService.findAll(page);
+        return {postData};
     }
 
     @Get('/user/:id')
@@ -24,8 +25,11 @@ export class PostController {
 
     @Post('/')
     @AccessLevel(AccessLevelList.LEVEL_CUSTOMER)
-    async insert(@Body() data:IPost){ 
-        const list = await this.productService.insert(data);
+    @UseInterceptors(FileInterceptor('image',{ dest: "./images" }))
+    async add(@UploadedFile() image: Express.Multer.File, @Body() data: any) {
+        
+        const dataobj = JSON.parse(data.payload)
+        const list = await this.productService.insert(image,dataobj);
         return { list };
     }
 
