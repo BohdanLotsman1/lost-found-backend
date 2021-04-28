@@ -9,9 +9,12 @@ export class PostService {
         
         const postsCount:any =  await PostModel.query().select().count().as('count').first()
 
-        let pages = Math.floor(postsCount['count(*)']/10);
+        let pages = Math.round(postsCount['count(*)']/10);
 
-        const list = await PostModel.query().select().limit(10).offset(page*10-10);
+        if(pages<postsCount['count(*)']/10)
+        pages++
+
+        const list = await PostModel.query().select().limit(10).offset(page*10-10).orderBy('created_at','DESC');
 
         if(pages == 0){
             pages = 1

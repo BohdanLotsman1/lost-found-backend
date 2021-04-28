@@ -49,9 +49,23 @@ export class UserService {
         return UserModel.query().delete().where('id', userID );
     }
 
-    async getAllUsers():Promise<UserModel[]>{
+    async getAllUsers({page}:any):Promise<any>{
 
-        return UserModel.query().select()
+        const userssCount =  await UserModel.query().select().count().first()
+
+        let pages = Math.round(userssCount['count(*)']/10);
+
+        if(pages<userssCount['count(*)']/10)
+        pages++
+
+        const list = await UserModel.query().select().limit(10).offset(page*10-10);
+
+        if(pages == 0){
+            pages = 1
+        }
+
+        return{list,pages}
+
     }
  
 }

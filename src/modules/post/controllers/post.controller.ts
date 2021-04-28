@@ -10,7 +10,6 @@ export class PostController {
     constructor(protected productService: PostService) {}
 
     @Get('/')
-    @AccessLevel(AccessLevelList.LEVEL_CUSTOMER)
     async all(@Query('page') page:any){ 
         const postData = await this.productService.findAll(page);
         return {postData};

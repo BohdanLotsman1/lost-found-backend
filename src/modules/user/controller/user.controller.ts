@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { AccessLevel } from 'src/lib/decorator/app-access.decorator';
 import { AccessLevelList } from 'src/lib/enums/accessLevel.list';
 import { UserService } from 'src/modules/user/services/user.service';
@@ -12,8 +12,8 @@ export class UserController {
 
     @Get('/all')
     @AccessLevel(AccessLevelList.LEVEL_SUPER)
-    async all(@Req() request){ 
-        const data = await this.userService.getAllUsers();
+    async all(@Query() page:number){ 
+        const data = await this.userService.getAllUsers(page);
         return { data };
     }
 
