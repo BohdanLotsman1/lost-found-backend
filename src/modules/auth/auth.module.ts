@@ -30,6 +30,7 @@ export class AuthModule implements NestModule {
             { path: '/auth/login', method: RequestMethod.POST },
             { path:'/register', method: RequestMethod.POST},
             { path:'/post', method:RequestMethod.ALL},
+            { path:'/post/search', method:RequestMethod.ALL},
         ).forRoutes("*")
        
             
@@ -38,6 +39,7 @@ export class AuthModule implements NestModule {
                 { path: '/auth/login', method: RequestMethod.POST },
                 { path:'/register', method: RequestMethod.POST},
                 { path:'/post', method:RequestMethod.ALL},
+                { path:'/post/search', method:RequestMethod.ALL},
             ).forRoutes("*");
     }
 }

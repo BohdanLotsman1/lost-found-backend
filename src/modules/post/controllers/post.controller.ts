@@ -22,8 +22,13 @@ export class PostController {
         return { list };
     }
 
+    @Get('/search')
+    async serachPosts(@Query('page') page:number, @Query('search') search:string){ 
+        const list = await this.productService.searchPosts(page,search);
+        return { list };
+    }
+
     @Post('/')
-    @AccessLevel(AccessLevelList.LEVEL_CUSTOMER)
     @UseInterceptors(FileInterceptor('image',{ dest: "./images" }))
     async add(@UploadedFile() image: Express.Multer.File, @Body() data: any) {
         
@@ -34,9 +39,11 @@ export class PostController {
 
     @Patch('/:id')
     @AccessLevel(AccessLevelList.LEVEL_CUSTOMER)
-    async update(@Param('id') id:string, @Body() data:IPost){ 
-        const list = await this.productService.update(id,data);
-        return { list };
+    @UseInterceptors(FileInterceptor('image',{ dest: "./images" }))
+    async update(@UploadedFile() image: Express.Multer.File, @Param('id' ) id: string, @Body() data: any) {
+        const dataobj = JSON.parse(data.payload)
+        const post = await this.productService.update(id,dataobj,image);
+        return { post };
     }
 
     @Delete('/:id')
